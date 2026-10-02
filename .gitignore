@@ -1,0 +1,6 @@
+.env
+__pycache__/
+*.pyc
+test_deepseek.py
+test_fuyao.py
+.vscode/
