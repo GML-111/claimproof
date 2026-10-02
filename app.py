@@ -8,8 +8,20 @@ from openai import OpenAI
 
 load_dotenv()
 
+st.set_page_config(page_title="ClaimProof", layout="wide")
+
+# ============ 密钥读取：本地读 .env，线上读 Streamlit secrets ============
+def _get_secret(key):
+    v = os.getenv(key)
+    if v:
+        return v
+    try:
+        return st.secrets[key]
+    except Exception:
+        return None
+
 # ============ 1. 工具注册表（Agent Harness 机制展示） ============
-FUYAO_KEY = os.getenv("FUYAO_API_KEY")
+FUYAO_KEY = _get_secret("FUYAO_API_KEY")
 BASE_URL = "https://fuyao.aicubes.cn"
 
 def tool_get_snapshot(thscode: str):
@@ -57,7 +69,7 @@ TOOLS = {
 
 # ============ 2. LLM 客户端 ============
 client = OpenAI(
-    api_key=os.getenv("DEEPSEEK_API_KEY"),
+    api_key=_get_secret("DEEPSEEK_API_KEY"),
     base_url="https://api.deepseek.com",
 )
 
@@ -125,7 +137,6 @@ def llm_evidence(claim: str, sub_questions, data_bundle):
     return json.loads(resp.choices[0].message.content)
 
 # ============ 3. 页面 ============
-st.set_page_config(page_title="ClaimProof", layout="wide")
 st.title("ClaimProof｜投资命题多证据验证器")
 st.caption("输入投资命题 → AI 拆解 → 调用真实数据 → 支持/反对/无法验证证据链 → 条件化结论")
 
