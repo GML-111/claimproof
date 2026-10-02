@@ -2,3 +2,5 @@ streamlit
 openai
 requests
 python-dotenv
+pandas
+plotly
